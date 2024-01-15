@@ -1,4 +1,4 @@
-# bing_Copilot_ai_clone
+# Bing_Copilot_ai_clone
 
 - Full Clone of Bing Copilot AI.
 - Consists of 3 screens Home(Chat Page), Recent Activity( saved chats), & Plugins page
