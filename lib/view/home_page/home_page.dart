@@ -1,7 +1,15 @@
+import 'dart:ffi';
+
+import 'package:bing_ai_clone_flutter/view/home_page/components/headerIntro.dart';
+import 'package:bing_ai_clone_flutter/view/home_page/components/user_choice_button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:bing_ai_clone_flutter/constants.dart';
 
+import 'components/gpt4_toggle.dart';
 import 'components/initial_prompt_card.dart';
 import 'components/sample_prompt_chip.dart';
 import '../../constants.dart';
@@ -32,11 +40,15 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: const Color(0xff303030),
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {
-            Get.to(() => const MenuPage());
-          },
+        leading: Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                Get.to(() => const MenuPage());
+              },
+            ),
+          ],
         ),
         actions: [
           IconButton(
@@ -53,133 +65,126 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Column(
-                children: [
-                  Text(
-                    'Copilot,',
-                    style:
-                        TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    'with Bing',
-                    style: TextStyle(
-                      fontSize: 8.0,
-                    ),
-                  ),
-                ],
+              const Padding(
+                padding: EdgeInsets.fromLTRB(0, 24.0, 0, 16.0),
+                child: HeaderIntro(),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Copilot is powered by AI, so surprises and mistakes are possible.',
-                    textAlign: TextAlign.center,
-                    // style: TextStyle(fontSize: 8.0),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          // Go to terms page
-                        },
-                        child: Text(
-                          'Terms',
-                          style: TextStyle(fontSize: 12, color: kThemeColor),
-                        ),
-                      ),
-                      const Text("|"),
-                      TextButton(
-                        onPressed: () {
-                          // Go to privacy page
-                        },
-                        child: Text(
-                          'Privacy',
-                          style: TextStyle(fontSize: 12, color: kThemeColor),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 2.5,
-                    height: 40.0,
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(color: kThemeColor, width: 1.0),
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Use GPT-4',
-                            ),
-                            Switch(
-                              value: true,
-                              onChanged: (value) {
-                                // Toggle GPT-4
-                              },
-                              activeColor: Colors.white,
-                              activeTrackColor: Colors.purple[400],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const Text(
-                    'Some ideas to get you started',
-                  ),
-                ],
+
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(vertical: 16.0),
+              //   child: Container(
+              //     color: Colors.white,
+              //     width: MediaQuery.of(context).size.width * 0.9,
+              //     height: MediaQuery.of(context).size.height * 0.3,
+              //   ),
+              // ),
+
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.3,
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    itemCount: 10,
+                    itemBuilder: (context, index) {
+                      return Container(
+                          color: Colors.white,
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          height: MediaQuery.of(context).size.height * 0.3,
+                          child: Center(child: Text("Card$index")));
+                    }),
               ),
-              const Expanded(
-                flex: 3,
-                child: Column(children: [
-                  InitialPromptCard(
-                      icon: Icon(Icons.airplanemode_active),
-                      text: 'What is the best way to travel to Europe?'),
-                  InitialPromptCard(
-                      icon: Icon(Icons.umbrella),
-                      text:
-                          'Write a short essay that analyzes the merits of universal basic income'),
-                  InitialPromptCard(
-                      icon: Icon(Icons.food_bank),
-                      text:
-                          'Where should I travel if I have pollen allergies?'),
-                ]),
-              ),
-              Expanded(
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(color: kThemeColor, width: 1.0),
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      'Happy to see you! I\'ve learned a lot from you, what should we explore next?',
-                    ),
-                  ),
-                ),
-              ),
-              const Expanded(
+
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SamplePromptChip(
-                      promptText: 'Make a poem',
+                    Padding(
+                      padding: EdgeInsets.only(right: 8.0),
+                      child: Text(
+                        "Copilot uses AI. Check for mistakes.",
+                        style: TextStyle(fontSize: 12),
+                      ),
                     ),
-                    SamplePromptChip(
-                      promptText: 'Tell me a fact',
-                    ),
-                    SamplePromptChip(
-                      promptText: 'tell me a joke',
-                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CompanyLinks(
+                          title: "Terms",
+                        ),
+                        Text(
+                          " | ",
+                          style: TextStyle(),
+                        ),
+                        CompanyLinks(
+                          title: "Privacy",
+                        ),
+                        Text(" | "),
+                        CompanyLinks(
+                          title: "FAQ",
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),
+
+              const GPT4Toggle(),
+
+              const Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Image(
+                        image: AssetImage('assets/images/copilot.png'),
+                        width: 24,
+                        height: 24,
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        'Copilot',
+                        style: TextStyle(
+                            fontSize: 18.0, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    "Hello again! I'm glad we can keep chatting. What do you want to explore today?",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Row(
+                    children: [
+                      UserChoiceButton(
+                        userIcon: Icons.thumb_up_alt_outlined,
+                      ),
+                      UserChoiceButton(
+                        userIcon: Icons.thumb_down_alt_outlined,
+                      ),
+                      UserChoiceButton(
+                        userIcon: Icons.copy,
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              // const Expanded(
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //     children: [
+              //       SamplePromptChip(
+              //         promptText: 'Make a poem',
+              //       ),
+              //       SamplePromptChip(
+              //         promptText: 'Tell me a fact',
+              //       ),
+              //       SamplePromptChip(
+              //         promptText: 'tell me a joke',
+              //       ),
+              //     ],
+              //   ),
+              // ),
               Expanded(
                 child: Row(
                   children: [
@@ -200,13 +205,15 @@ class _HomePageState extends State<HomePage> {
                         controller: promptController,
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
+                          filled: true,
+                          fillColor: const Color(0xff303030),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
                             borderSide:
                                 BorderSide(color: kThemeColor, width: 1.0),
                           ),
                           hintText: 'Ask me anything...',
-                          hintStyle: TextStyle(color: Colors.grey.shade400),
+                          hintStyle: const TextStyle(color: Colors.white),
                           suffixIcon: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
@@ -237,6 +244,22 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class CompanyLinks extends StatelessWidget {
+  final String title;
+  const CompanyLinks({
+    super.key,
+    required this.title,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      title,
+      style: const TextStyle(color: Colors.blue, fontSize: 12),
     );
   }
 }
