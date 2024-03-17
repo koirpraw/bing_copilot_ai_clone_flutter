@@ -1,11 +1,11 @@
-import 'dart:ffi';
+import 'package:bing_ai_clone_flutter/controller/api_controller.dart';
+import 'package:flutter/material.dart';
 
+import 'package:bing_ai_clone_flutter/view/home_page/components/chat_input_field.dart';
 import 'package:bing_ai_clone_flutter/view/home_page/components/headerIntro.dart';
 import 'package:bing_ai_clone_flutter/view/home_page/components/user_choice_button.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
+import 'package:bing_ai_clone_flutter/view/home_page/components/user_greeting_conatiner.dart';
+
 import 'package:get/get.dart';
 import 'package:bing_ai_clone_flutter/constants.dart';
 
@@ -24,19 +24,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late TextEditingController promptController;
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    promptController = TextEditingController();
   }
 
+  ApiController apiController = Get.put(ApiController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: const Color(0xff303030),
         elevation: 0,
@@ -61,186 +59,113 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Padding(
-                padding: EdgeInsets.fromLTRB(0, 24.0, 0, 16.0),
-                child: HeaderIntro(),
-              ),
-
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(vertical: 16.0),
-              //   child: Container(
-              //     color: Colors.white,
-              //     width: MediaQuery.of(context).size.width * 0.9,
-              //     height: MediaQuery.of(context).size.height * 0.3,
-              //   ),
-              // ),
-
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.3,
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    shrinkWrap: true,
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      return Container(
-                          color: Colors.white,
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          height: MediaQuery.of(context).size.height * 0.3,
-                          child: Center(child: Text("Card$index")));
-                    }),
-              ),
-
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(right: 8.0),
-                      child: Text(
-                        "Copilot uses AI. Check for mistakes.",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CompanyLinks(
-                          title: "Terms",
-                        ),
-                        Text(
-                          " | ",
-                          style: TextStyle(),
-                        ),
-                        CompanyLinks(
-                          title: "Privacy",
-                        ),
-                        Text(" | "),
-                        CompanyLinks(
-                          title: "FAQ",
-                        ),
-                      ],
-                    )
-                  ],
+        child: SingleChildScrollView(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.9,
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(0, 24.0, 0, 16.0),
+                  child: HeaderIntro(),
                 ),
-              ),
 
-              const GPT4Toggle(),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(vertical: 16.0),
+                //   child: Container(
+                //     color: Colors.white,
+                //     width: MediaQuery.of(context).size.width * 0.9,
+                //     height: MediaQuery.of(context).size.height * 0.3,
+                //   ),
+                // ),
 
-              const Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Image(
-                        image: AssetImage('assets/images/copilot.png'),
-                        width: 24,
-                        height: 24,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Copilot',
-                        style: TextStyle(
-                            fontSize: 18.0, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    "Hello again! I'm glad we can keep chatting. What do you want to explore today?",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Row(
-                    children: [
-                      UserChoiceButton(
-                        userIcon: Icons.thumb_up_alt_outlined,
-                      ),
-                      UserChoiceButton(
-                        userIcon: Icons.thumb_down_alt_outlined,
-                      ),
-                      UserChoiceButton(
-                        userIcon: Icons.copy,
-                      ),
-                    ],
-                  )
-                ],
-              ),
-              // const Expanded(
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //     children: [
-              //       SamplePromptChip(
-              //         promptText: 'Make a poem',
-              //       ),
-              //       SamplePromptChip(
-              //         promptText: 'Tell me a fact',
-              //       ),
-              //       SamplePromptChip(
-              //         promptText: 'tell me a joke',
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              Expanded(
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: IconButton(
-                          onPressed: () {
-                            // ApiConnection().getResponse(promptController.text);
-                          },
-                          icon: const Icon(
-                            Icons.chat_bubble_outline_rounded,
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.25,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      itemCount: 10,
+                      itemBuilder: (context, index) {
+                        return Container(
                             color: Colors.white,
-                          )),
-                    ),
-                    Expanded(
-                      flex: 6,
-                      child: TextFormField(
-                        controller: promptController,
-                        style: const TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: const Color(0xff303030),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            borderSide:
-                                BorderSide(color: kThemeColor, width: 1.0),
-                          ),
-                          hintText: 'Ask me anything...',
-                          hintStyle: const TextStyle(color: Colors.white),
-                          suffixIcon: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              IconButton(
-                                icon: Icon(
-                                  Icons.camera_alt_outlined,
-                                  color: Colors.pink.shade100,
-                                ),
-                                onPressed: () {
-                                  // Send message
-                                },
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.mic),
-                                onPressed: () {
-                                  // Send message
-                                },
-                              ),
-                            ],
-                          ),
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.3,
+                            child: Center(child: Text("Card$index")));
+                      }),
+                ),
+
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(right: 8.0),
+                        child: Text(
+                          "Copilot uses AI. Check for mistakes.",
+                          style: TextStyle(fontSize: 12),
                         ),
                       ),
-                    ),
-                  ],
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CompanyLinks(
+                            title: "Terms",
+                          ),
+                          Text(
+                            " | ",
+                            style: TextStyle(),
+                          ),
+                          CompanyLinks(
+                            title: "Privacy",
+                          ),
+                          Text(" | "),
+                          CompanyLinks(
+                            title: "FAQ",
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+
+                const GPT4Toggle(),
+
+                const UserGreetingContainer(),
+                Expanded(
+                    flex: 1,
+                    child: FutureBuilder(
+                      future: ApiConnection()
+                          .getResponse(apiController.promptController.text),
+                      builder: (context, snapshot) {
+                        return Text(snapshot.data.toString());
+                      },
+                    )),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: IconButton(
+                            onPressed: () {
+                              ApiConnection().getResponse(
+                                  apiController.promptController.text);
+                            },
+                            icon: const Icon(
+                              Icons.chat_bubble_outline_rounded,
+                              color: Colors.white,
+                            )),
+                      ),
+                      Expanded(
+                        flex: 6,
+                        child: ChatInputField(
+                            promptController: apiController.promptController),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
