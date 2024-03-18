@@ -40,7 +40,7 @@ class ApiConnection extends GetConnect {
         body: jsonEncode({
           "model": "gpt-3.5-turbo",
           "messages": [
-            {"role": "system", "content": "You are a helpful assistant."},
+            // {"role": "system", "content": "You are a helpful assistant."},
             // {"role": "user", "content": "What is an api?"},
             {"role": "user", "content": prompt},
           ],
