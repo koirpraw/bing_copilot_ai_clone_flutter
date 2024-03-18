@@ -1,4 +1,7 @@
+import 'package:bing_ai_clone_flutter/controller/api_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 
 class ImageSlideContainer extends StatelessWidget {
   PageController controller = PageController();
@@ -6,17 +9,17 @@ class ImageSlideContainer extends StatelessWidget {
     super.key,
     required this.controller,
   });
-
+  final ApiController apiController = Get.put(ApiController());
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.25,
-      width: MediaQuery.of(context).size.width * 0.8,
+      width: MediaQuery.of(context).size.width * 0.75,
       child: PageView.builder(
           scrollDirection: Axis.horizontal,
           controller: controller,
           // physics: const NeverScrollableScrollPhysics(),
-          itemCount: 10,
+          itemCount: apiController.promptImages.length,
           itemBuilder: (context, index) {
             return AnimatedBuilder(
               animation: controller,
@@ -33,11 +36,43 @@ class ImageSlideContainer extends StatelessWidget {
                   ),
                 );
               },
-              child: Container(
-                  margin: const EdgeInsets.all(8.0),
-                  color: Colors.white,
-                  child: Center(
-                      child: Card(elevation: 3, child: Text("Card$index")))),
+              child: Stack(children: [
+                Positioned(
+                  child: Card(
+                      elevation: 3,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      color: Colors.white,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12.0),
+                        child: Image(
+                          image: NetworkImage(
+                            apiController.promptImages[index],
+                          ),
+                          fit: BoxFit.cover,
+                          // colorBlendMode: BlendMode.colorBurn,
+                          semanticLabel: 'Prompt Image',
+                        ),
+                      )),
+                ),
+                Positioned(
+                  bottom: 8,
+                  right: 8,
+                  left: 8,
+                  child: Card(
+                    color: Colors.grey.shade800,
+                    child: const Padding(
+                      padding: EdgeInsets.all(4.0),
+                      child: Text(
+                        "Search Images",
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                )
+              ]),
             );
           }),
     );

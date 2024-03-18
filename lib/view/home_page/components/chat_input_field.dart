@@ -18,33 +18,31 @@ class _ChatInputFieldState extends State<ChatInputField> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      child: TextFormField(
-        controller: apiController.promptController,
-        keyboardType: TextInputType.multiline,
-        maxLines: 50,
-        focusNode: focusNode,
-        decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-              borderSide: BorderSide(color: kThemeColor, width: 1.0),
+    return TextFormField(
+      controller: apiController.promptController,
+      keyboardType: TextInputType.multiline,
+      maxLines: 50,
+      focusNode: focusNode,
+      decoration: InputDecoration(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            borderSide: BorderSide(color: kThemeColor, width: 1.0),
+          ),
+          filled: true,
+          fillColor: const Color(0xff303030),
+          labelText: 'Ask me anything...',
+          suffixIcon: IconButton(
+            icon: Icon(
+              Icons.send,
+              color: Colors.pink.shade100,
             ),
-            filled: true,
-            fillColor: const Color(0xff303030),
-            labelText: 'Ask me anything...',
-            suffixIcon: IconButton(
-              icon: Icon(
-                Icons.send,
-                color: Colors.pink.shade100,
-              ),
-              onPressed: () {
-                if (apiController.promptController.text.isNotEmpty) {
-                  apiController.sendMessage();
-                  apiController.promptController.clear();
-                }
-              },
-            )),
-      ),
+            onPressed: () {
+              if (apiController.promptController.text.isNotEmpty) {
+                apiController.sendMessage();
+                apiController.promptController.clear();
+              }
+            },
+          )),
     );
     // );
   }

@@ -1,3 +1,4 @@
+import 'package:bing_ai_clone_flutter/model/chat_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
@@ -57,11 +58,4 @@ class ApiConnection extends GetConnect {
       rethrow;
     }
   }
-}
-
-class Message {
-  String content;
-  String response;
-
-  Message(this.content, this.response);
 }

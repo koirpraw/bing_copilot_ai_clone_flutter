@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
       if (_controller.page?.round() == _controller.initialPage) {
         _controller.animateToPage(_controller.page!.round() + 1,
             duration: const Duration(milliseconds: 350), curve: Curves.easeIn);
-      } else if (_controller.page?.round() == 9) {
+      } else if (_controller.page?.round() == 4) {
         _controller.animateToPage(_controller.initialPage,
             duration: const Duration(milliseconds: 350), curve: Curves.easeIn);
       } else {
