@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bing_ai_clone_flutter/controller/api_controller.dart';
+import 'package:bing_ai_clone_flutter/view/home_page/components/image_slide_container.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bing_ai_clone_flutter/view/home_page/components/chat_input_field.dart';
@@ -26,21 +27,27 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-final TextEditingController promptController = TextEditingController();
+//
 late PageController _controller;
 
 class _HomePageState extends State<HomePage> {
+  final _apiConnect = ApiConnection();
+  final _chatInputFocusNode = FocusNode();
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _controller = PageController(initialPage: 0);
-    Timer.periodic(const Duration(seconds: 2), (Timer timer) {
+    _controller = PageController(initialPage: 0, viewportFraction: 0.6);
+    Timer.periodic(const Duration(seconds: 3), (Timer timer) {
       if (_controller.page?.round() == _controller.initialPage) {
         _controller.animateToPage(_controller.page!.round() + 1,
             duration: const Duration(milliseconds: 350), curve: Curves.easeIn);
-      } else {
+      } else if (_controller.page?.round() == 9) {
         _controller.animateToPage(_controller.initialPage,
+            duration: const Duration(milliseconds: 350), curve: Curves.easeIn);
+      } else {
+        _controller.animateToPage(_controller.page!.round() + 1,
             duration: const Duration(milliseconds: 350), curve: Curves.easeIn);
       }
     });
@@ -90,28 +97,9 @@ class _HomePageState extends State<HomePage> {
                           padding: EdgeInsets.fromLTRB(0, 24.0, 0, 16.0),
                           child: HeaderIntro(),
                         ),
-
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.25,
-                          width: MediaQuery.of(context).size.width * 0.6,
-                          child: PageView.builder(
-                              scrollDirection: Axis.horizontal,
-                              controller: _controller,
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: 10,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                      color: Colors.white,
-                                      child: Center(
-                                          child: Card(
-                                              elevation: 3,
-                                              child: Text("Card$index")))),
-                                );
-                              }),
-                        ),
-
+                        _chatInputFocusNode.hasFocus
+                            ? const SizedBox()
+                            : ImageSlideContainer(controller: _controller),
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 16.0),
                           child: Row(
@@ -147,29 +135,101 @@ class _HomePageState extends State<HomePage> {
                             ],
                           ),
                         ),
-
                         const GPT4Toggle(),
-
                         const UserGreetingContainer(),
+                        Expanded(
+                            flex: 1,
+                            child: Obx(
+                              () => ListView.builder(
+                                  itemCount: apiController.messages.length,
+                                  itemBuilder: (context, index) {
+                                    final message =
+                                        apiController.messages[index];
+                                    return Column(
+                                      children: [
+                                        Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.account_circle_rounded,
+                                                  color: kThemeColor,
+                                                ),
+                                                const Text(
+                                                  "You",
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                            Text(message.content),
+                                          ],
+                                        ),
+                                        const Divider(),
+                                        Column(
+                                          children: [
+                                            const Row(
+                                              children: [
+                                                Image(
+                                                    image: AssetImage(
+                                                        'assets/images/copilot.png'),
+                                                    width: 24,
+                                                    height: 24),
+                                                Text(
+                                                  "You",
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ],
+                                            ),
+                                            Text(message.content),
+                                          ],
+                                        ),
+                                      ],
+                                    );
+                                  }),
+                            )),
                         // Expanded(
-                        //     flex: 1,
-                        //     child: FutureBuilder(
-                        //       future: ApiConnection()
-                        //           .getResponse(apiController.promptController.text),
-                        //       builder: (context, snapshot) {
-                        //         return ListView.builder(
-                        //             itemCount: snapshot.data.toString().length,
-                        //             itemBuilder: (context, index) {
-                        //               return Text(snapshot.data.toString());
-                        //             });
-                        //       },
-                        //     )),
+                        //   flex: 2,
+                        //   child: ListView.builder(
+                        //     itemCount: apiController.messages.length,
+                        //     itemBuilder: (context, index) {
+                        //       return Column(
+                        //         mainAxisAlignment:
+                        //             MainAxisAlignment.spaceBetween,
+                        //         crossAxisAlignment: CrossAxisAlignment.start,
+                        //         children: [
+                        //           Row(
+                        //             children: [
+                        //               Icon(
+                        //                 Icons.account_circle_rounded,
+                        //                 color: kThemeColor,
+                        //               ),
+                        //               const Text(
+                        //                 "You",
+                        //                 style: TextStyle(
+                        //                     fontSize: 12,
+                        //                     fontWeight: FontWeight.bold),
+                        //               ),
+                        //             ],
+                        //           ),
+                        //           Text(apiController.messages[index]),
+                        //         ],
+                        //       );
+                        //     },
+                        //   ),
+                        // )
                       ],
                     ),
                   ),
                 ),
               ),
               Expanded(
+                flex: _chatInputFocusNode.hasFocus ? 2 : 1,
                 child: Row(
                   children: [
                     Expanded(
@@ -185,7 +245,37 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                    Expanded(flex: 5, child: ChatInputField())
+                    Expanded(
+                        flex: 5,
+                        child: TextFormField(
+                          controller: apiController.promptController,
+                          keyboardType: TextInputType.multiline,
+                          minLines: 1,
+                          maxLines: _chatInputFocusNode.hasFocus ? null : 1,
+                          focusNode: _chatInputFocusNode,
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                                borderSide:
+                                    BorderSide(color: kThemeColor, width: 1.0),
+                              ),
+                              filled: true,
+                              fillColor: const Color(0xff303030),
+                              labelText: 'Ask me anything...',
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  Icons.send,
+                                  color: Colors.pink.shade100,
+                                ),
+                                onPressed: () {
+                                  if (apiController
+                                      .promptController.text.isNotEmpty) {
+                                    apiController.sendMessage();
+                                    apiController.promptController.clear();
+                                  }
+                                },
+                              )),
+                        ))
                   ],
                 ),
               ),

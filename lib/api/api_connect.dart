@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 class ApiConnection extends GetConnect {
   var url = "https://api.openai.com/v1/chat/completions";
-  List<String> messages = [];
+  List<Message> messages = [];
 
   @override
   void onInit() {}
@@ -29,7 +29,7 @@ class ApiConnection extends GetConnect {
   //   return response;
   // }
 
-  Future<String> getResponse(String prompt) async {
+  Future<Message> getResponse(String prompt) async {
     try {
       var response = await http.post(
         Uri.parse(url),
@@ -44,16 +44,24 @@ class ApiConnection extends GetConnect {
             // {"role": "user", "content": "What is an api?"},
             {"role": "user", "content": prompt},
           ],
+          "max_tokens": 100
         }),
       );
       var data = jsonDecode(response.body);
       String message = data['choices'][0]['message']['content'];
 
       print(message);
-      return message;
+      return Message(prompt, message);
     } catch (e) {
       print('Request failed with error: $e');
       rethrow;
     }
   }
+}
+
+class Message {
+  String content;
+  String response;
+
+  Message(this.content, this.response);
 }
