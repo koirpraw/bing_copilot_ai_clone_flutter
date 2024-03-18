@@ -2,6 +2,17 @@
 
 - Full Clone of Bing Copilot AI.
 - Consists of 3 screens Home(Chat Page), Recent Activity( saved chats), & Plugins page
+- Full functional ChatBot with text(add api key).
+- 
+
+
+# Updated UI with Chat.
+
+
+https://github.com/koirpraw/bing_copilot_ai_clone_flutter/assets/7278348/77d67883-b088-4ef1-8d51-93f2a395a3a1
+
+
+
 
 ## ScreenShots
 <table>
